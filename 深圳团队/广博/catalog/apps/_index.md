@@ -1,71 +1,70 @@
 ---
-title: Apps in a Project
+title: 创建应用
 ---
+在项目层级内，当要从应用商店部署应用时，项目中可用的应用程序将基于[商店设置的范围](/docs/catalog/#catalog-scope))。
 
-Within a project, when you want to deploy applications from catalogs, the applications available in your project will be based on the [scope of the catalogs](/docs/catalog/#catalog-scope).
+如果你的应用使用Ingresses，则可以通过设置[全局DNS入口](/docs/catalog/globaldns/)将主机名配置为外部DNS。
 
-If your application is using ingresses, you can program the ingress hostname to an external DNS by setting up a [Global DNS entry](/docs/catalog/globaldns/).
+### 前置条件
 
-### Prerequisites
+要在Rancher2.x中部署多集群应用，必须满足以下一个权限：
 
-To create a multi-cluster app in Rancher, you must have at least one of the following permissions:
+- 目标集群的[项目成员角色](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)，使您能够创建，读取，更新和删除工作负载
+- 目标集群的[集群所有者角色](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)
 
-- A [project-member role](/docs/admin-settings/rbac/cluster-project-roles/#project-roles) in the target cluster, which gives you the ability to create, read, update, and delete the workloads
-- A [cluster owner role](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles) for the cluster that include the target project
+### 从应用商店中创建应用
 
-### Launching Catalog Applications
+启用[内置全局商店](/docs/catalog/built-in/)或[添加自定义商店](/docs/catalog/custom/adding)之后，可以开始部署商店的应用。
 
-After you've either enabled the [built-in global catalogs](/docs/catalog/built-in/) or [added your own custom catalog](/docs/catalog/custom/adding), you can start launching catalog applications.
+1. 从**全局**视图中，导航到要开始部署应用程序的项目。
 
-1. From the **Global** view, navigate to your project that you want to start deploying applications.
+2. 从主导航栏中，选择**应用商店**。在v2.2.0之前的版本中，在主导航栏上选择**Catalog Apps**。点击**启动**。
 
-2. From the main navigation bar, choose **Apps**. In versions prior to v2.2.0, choose **Catalog Apps** on the main navigation bar. Click **Launch**.
+3. 找到您要启动的应用程序，然后单击**查看详细信息**。
 
-3. Find the application that you want to launch, and then click **View Details**.
+4. (可选)查看详细说明，该说明来自Helm应用的**README**。
 
-4. (Optional) Review the detailed descriptions, which comes from the Helm chart's `README`.
+5. 在**配置选项**下，输入**名称**。默认情况下，该名称还用于为应用程序创建Kubernetes命名空间。
 
-5. Under **Configuration Options** enter a **Name**. By default, this name is also used to create a Kubernetes namespace for the application.
+   -如果您想更改**名称空间**，请单击**自定义**并更改名称空间的名称。
+   -如果要使用已经存在的其他名称空间，请单击**自定义**，然后单击**使用现有的名称空间**。从列表中选择一个名称空间。
 
-   - If you would like to change the **Namespace**, click **Customize** and change the name of the namespace.
-   - If you want to use a different namespace that already exists, click **Customize**, and then click **Use an existing namespace**. Choose a namespace from the list.
+6. 选择一个**模板版本**。
 
-6. Select a **Template Version**.
+7. 完成其余的**配置选项**。 Rancher会根据自定义目录是否包含questions.yml文件来处理如何[自定义配置选项](＃configuration-options)。
 
-7. Complete the rest of the **Configuration Options**. Rancher handles how to [customize your configuration options](#configuration-options) depending on whether or not the custom catalog includes the `questions.yml` file.
+8. 查看**预览**部分中的文件。如果确认，请单击**启动**。
 
-8. Review the files in the **Preview** section. When you're satisfied, click **Launch**.
+**结果**：您的应用程序已部署到所选的名称空间。您可以从项目的以下位置查看应用程序状态：
 
-**Result**: Your application is deployed to your chosen namespace. You can view the application status from the project's:
+- **资源->工作负载**
+- **应用商店**应用列表
 
-- **Workloads** view
-- **Apps** view. In versions prior to v2.2.0, this is the **Catalog Apps** view.
+#### 配置选项
 
-#### Configuration Options
+对于每个Helm Chart，必须输入必要的答案才能成功部署应用。 输入答案时，必须使用在[使用Helm：–set](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set)的格式和限制中找到的语法规则设置它们的格式，因为Rancher会将它们作为--set值传递给Helm部署。
 
-For each Helm chart, there are a list of desired answers that must be entered in order to successfully deploy the chart. When entering answers, you must format them using the syntax rules found in [Using Helm: The format and limitations of –set](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set), as Rancher passes them as `--set` flags to Helm.
-
-> For example, when entering an answer that includes two values separated by a comma (i.e. `abc, bcd`), it is required to wrap the values with double quotes (i.e., `"abc, bcd"`).
+> 例如，当输入包含两个用逗号分隔的值(即`abc, bcd`)的答案时，要求用双引号将这些值引起来(即`"abc，bcd"`)。
 
  tabs 
  tab "UI" 
 
-##### Using a `questions.yml` file
+##### 使用`questions.yml`文件
 
-If the Helm chart that you are deploying contains a `questions.yml` file, Rancher's UI will translate this file to display an easy to use UI to collect the answers for the questions.
+如果您要部署的Helm应用包含了一个`questions.yml`文件，则Rancher的用户界面将转换该文件以显示易于使用的用户界面来收集问题的答案。
 
-##### Key Value Pairs for Native Helm Charts
+##### 原生Helm Chart的键值对
 
-For native Helm charts (i.e., charts from the **Helm Stable** or **Helm Incubator** catalogs or a [custom Helm chart repository](/docs/catalog/custom/#custom-helm-chart-repository)), answers are provided as key value pairs in the **Answers** section. These answers are used to override the default values.
+对于原生的Helm Chart(即，来自**Helm Stable**或**Helm Incubator**目录的Chart或[自定义的应用商店](/docs/catalog/custom/#custom-helm-chart-repository), 答案在“答案”部分中作为键值对提供。 这些答案用于覆盖默认值。
 
  /tab 
- tab "Editing YAML Files" 
+ tab "编辑YAML" 
 
-_Available as of v2.1.0_
+_自v2.1.0起可用_
 
-If you do not want to input answers using the UI, you can choose the **Edit as YAML** option.
-
-With this example YAML:
+如果您不想使用用户界面输入答案，则可以选择**编辑为YAML**选项。
+ 
+通过此示例YAML：
 
 ```YAML
 outer:
@@ -75,11 +74,11 @@ servers:
   host: example
 ```
 
-##### Kev Value Pairs
+##### 键值对
 
-You can have a YAML file that translates these fields to match how to [format custom values so that it can be used with `--set`](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set).
+您可以拥有一个YAML文件，该文件可以转换这些字段以匹配[格式化自定义值的方式，以便可以与`--set`一起使用](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set).
 
-These values would be translated to:
+这些值将转换为：
 
 ```
 outer.inner=value
@@ -87,82 +86,80 @@ servers[0].port=80
 servers[0].host=example
 ```
 
-##### YAML files
+##### 使用YAML文件 
 
-_Available as of v2.2.0_
+_自v2.1.0起可用_
 
-You can directly paste that YAML formatted structure into the YAML editor. By allowing custom values to be set using a YAML formatted structure, Rancher has the ability to easily customize for more complicated input values (e.g. multi-lines, array and JSON objects).
+您可以直接将该YAML格式的结构粘贴到YAML编辑器中。 通过允许使用YAML格式的结构设置自定义值，Rancher能够轻松自定义更复杂的输入值（例如，多行，数组和JSON对象）。
+
  /tab 
  /tabs 
 
-### Application Management
+### 应用管理
 
-After deploying an application, one of the benefits of using an application versus individual workloads/resources is the ease of being able to manage many workloads/resources applications. Apps can be cloned, upgraded or rolled back.
+部署应用程序之后，与单独的工作负载/资源相比，使用应用商店的好处之一是能够轻松管理许多工作负载/资源应用程序。 可以克隆，升级或回滚应用程序。
 
-#### Cloning Catalog Applications
+#### 应用克隆
 
-After an application is deployed, you can easily clone it to use create another application with almost the same configuration. It saves you the work of manually filling in duplicate information.
+部署应用后，您可以轻松克隆它，以使用几乎相同的配置创建另一个应用程序。 它节省了您手动填写重复信息的工作。
 
-#### Upgrading Catalog Applications
+#### 应用升级
 
-After an application is deployed, you can easily upgrade to a different template version.
+部署应用程序后，您可以轻松升级到其他模板版本。
 
-1. From the **Global** view, navigate to the project that contains the catalog application that you want to upgrade.
+1. 从**全局**视图中，导航到包含要升级的目录应用程序的项目。
 
-1. From the main navigation bar, choose **Apps**. In versions prior to v2.2.0, choose **Catalog Apps** on the main navigation bar. Click **Launch**.
+1. 在主导航栏中，选择**应用商店**, 点击**启动**。
 
-1. Find the application that you want to upgrade, and then click the Ellipsis to find **Upgrade**.
+1. 找到要升级的应用程序，然后单击省略号以找到**升级**。
 
-1. Select the **Template Version** that you want to deploy.
+1. 选择要部署的**模板版本**。
 
-1. (Optional) Update your **Configuration Options**.
+1. （可选）更新您的**配置选项**。
 
-1. (Optional) Select whether or not you want to force the catalog application to be upgraded by checking the box for **Delete and recreate resources if needed during the upgrade**.
+1. （可选）通过选中**如果升级过程中需要，删除和重新创建资源**复选框，选择是否要强制升级目录应用程序。
+   > 在Kubernetes中，某些字段被设计为不可变的或无法直接更新。 从v2.2.0开始，无论这些字段如何，您现在都可以强制更新应用商店的应用。 这将导致应用程序被删除，并在升级期间根据需要重新创建资源。
 
-   > In Kubernetes, some fields are designed to be immutable or cannot be updated directly. As of v2.2.0, you can now force your catalog application to be updated regardless of these fields. This will cause the catalog apps to be deleted and resources to be re-created if needed during the upgrade.
+1. 查看**预览**部分中的文件。 如果满意，请单击**启动**。
 
-1. Review the files in the **Preview** section. When you're satisfied, click **Launch**.
+**结果**：您的应用程序已更新。 您可以从项目的以下位置查看应用程序状态：
 
-**Result**: Your application is updated. You can view the application status from the project's:
+- **资源**工作负载
+- **应用商店**应用列表
 
-- **Workloads** view
-- **Apps** view. In versions prior to v2.2.0, this is the **Catalog Apps** view.
+#### 应用程序回滚
 
-#### Rolling Back Catalog Applications
+升级应用程序后，您可以轻松回滚到其他模板版本。
 
-After an application has been upgraded, you can easily rollback to a different template version.
+1. 从**全局**视图中，导航到包含要升级的目录应用程序的项目。
 
-1. From the **Global** view, navigate to the project that contains the catalog application that you want to upgrade.
+1. 在主导航栏中，选择**应用商店**。
 
-1. From the main navigation bar, choose **Apps**. In versions prior to v2.2.0, choose **Catalog Apps** on the main navigation bar. Click **Launch**.
+1. 找到要回滚的应用程序，然后单击省略号以找到**回滚**。
 
-1. Find the application that you want to rollback, and then click the Ellipsis to find **Rollback**.
+1. 选择要回滚的**版本**。 默认情况下，Rancher最多保存最近的10个修订版本。
 
-1. Select the **Revision** that you want to roll back to. By default, Rancher saves up to the last 10 revisions.
+1. （可选）通过选中**如果升级过程中需要，删除和重新创建资源**复选框，选择是否要强制升级目录应用程序。
 
-1. (Optional) Select whether or not you want to force the catalog application to be upgraded by checking the box for **Delete and recreate resources if needed during the upgrade**.
+1. 确定并点击**回滚**.
 
-   > In Kubernetes, some fields are designed to be immutable or cannot be updated directly. As of v2.2.0, you can now force your catalog application to be updated regardless of these fields. This will cause the catalog apps to be deleted and resources to be re-created if needed during the rollback.
+**结果**：您的应用程序已更新。 您可以从项目的以下位置查看应用程序状态：
 
-1. Click **Rollback**.
+- **资源**工作负载
+- **应用商店**应用列表
 
-**Result**: Your application is updated. You can view the application status from the project's:
+#### 删除应用与工作负载
 
-- **Workloads** view
-- **Apps** view. In versions prior to v2.2.0, this is the **Catalog Apps** view.
+为了防止您无意中删除共享名称空间的其他目录应用程序，删除应用本身不会删除应用所在的名称空间。
 
-#### Deleting Catalog Application Deployments
+因此，如果要删除一个应用和其部署的名称空间，则应分别删除该应用和名称空间：
 
-As a safeguard to prevent you from unintentionally deleting other catalog applications that share a namespace, deleting catalog applications themselves does not delete the namespace they're assigned to.
+1. 使用应用程序的**删除**功能来卸载应用程序。
 
-Therefore, if you want to delete both an app and the namespace that contains the app, you should remove the app and the namespace separately:
+1. 从**全局**视图中，导航到包含要删除的应用目录。
 
-1. Uninstall the app using the app's `uninstall` function.
+1. 从主菜单中，选择**命名空间**。
 
-1. From the **Global** view, navigate to the project that contains the catalog application that you want to delete.
+1. 查找运行您的应用程序的名称空间。 选择它，然后单击**删除**。
 
-1. From the main menu, choose **Namespaces**.
-
-1. Find the namespace running your catalog app. Select it and click **Delete**.
-
-**Result:** The catalog application deployment and its namespace are deleted.
+**结果：** 应用目录应用程序部署及其名称空间被删除。

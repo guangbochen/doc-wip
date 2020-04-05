@@ -1,55 +1,56 @@
 ---
-title: Adding Custom Catalogs
+title: 添加自定义的应用商店
 ---
 
-[Custom catalogs](/docs/catalog/custom/) can be added into Rancher at any [scope of Rancher](/docs/catalog/#catalog-scope).
+[自定义应用商店](/docs/catalog/custom/)可以被添加到Rancher[不同的范围](/docs/catalog/#catalog-scope).
 
-### Adding Global Catalogs
-
-> **Prerequisites:** In order to manage the [built-in catalogs](/docs/catalog/built-in/) or manage global catalogs, you need _one_ of the following permissions:
+### 添加全局应用商店
+> **先决条件：** 为了管理内置目录或[管理全局目录](/docs/catalog/custom/adding/#adding-global-catalogs)，您需要具有以下权限之一：
 >
-> - [Administrator Global Permissions](/docs/admin-settings/rbac/global-permissions/)
-> - [Custom Global Permissions](/docs/admin-settings/rbac/global-permissions/#custom-global-permissions) with the [Manage Catalogs](/docs/admin-settings/rbac/global-permissions/#global-permissions-reference) role assigned.
+> - [管理员全局权限](/docs/admin-settings/rbac/global-permissions/)
+> - [自定义全局权限](/docs/admin-settings/rbac/global-permissions/#custom-global-permissions) 包含[Manage Catalogs](/docs/admin-settings/rbac/global-permissions/#global-permissions-reference) 权限.
 
-1.  From the **Global** view, choose **Tools > Catalogs** in the navigation bar. In versions prior to v2.2.0, you can select **Catalogs** directly in the navigation bar.
-2.  Click **Add Catalog**.
-3.  Complete the form and click **Create**.
+1. 从**全局**界面中，在导航栏中选择**工具>应用商店**。 在v2.2.0之前的版本中，您可以直接在导航栏中选择**应用商店**。
 
-**Result**: Your custom global catalog is added to Rancher. Once it is in `Active` state, it has completed synchronization and you will be able to start deploying [multi-cluster apps](/docs/catalog/multi-cluster-apps/) or [applications in any project](/docs/catalog/apps/) from this catalog.
+2. 单击**添加目录**。
 
-### Adding Cluster Catalogs
+3. 填写表格，然后单击**创建**。
 
-_Available as of v2.2.0_
+**结果**：您的自定义全局应用商店目录已添加到Rancher。 处于**Active**状态后，它已完成同步，您将能够开始部署[多集群应用](/docs/catalog/multi-cluster-apps/)或[任何项目中的应用](/docs/catalog/apps/)。
 
-> **Prerequisites:** In order to manage cluster scoped catalogs, you need _one_ of the following permissions:
+### 添加集群级别应用商店
+
+_自v2.1.0起可用_
+
+> **先决条件：** 为了管理集群范围的应用商店，您需要具有以下权限之一：
 >
-> - [Administrator Global Permissions](/docs/admin-settings/rbac/global-permissions/)
-> - [Cluster Owner Permissions](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)
-> - [Custom Cluster Permissions](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles) with the [Manage Cluster Catalogs](/docs/admin-settings/rbac/cluster-project-roles/#cluster-role-reference) role assigned.
+> - [管理员全局权限](/docs/admin-settings/rbac/global-permissions/)
+> - [集群所有者权限](/docs/admin-settings/rbac/cluster-project-roles/＃cluster-roles)
+> - [自定义集群权限](/docs/admin-settings/rbac/cluster-project-roles/＃cluster-roles)包含[Manage Cluster Catalogs](/docs/admin-settings/rbac/cluster-project-roles/＃cluster-role-reference)权限。
 
-1. From the **Global** view, navigate to your cluster that you want to start adding custom catalogs.
-2. Choose the **Tools > Catalogs** in the navigation bar.
-3. Click **Add Catalog**.
-4. Complete the form. By default, the form will provide the ability to select `Scope` of the catalog. When you have added a catalog from the **Cluster** scope, it is defaulted to `Cluster`.
-5. Click **Create**.
+1. 从**全局**界面，导航到要开始添加自定义应用商店的集群。
+2. 在导航栏中选择**工具>商店设置**。
+3. 单击**添加应用商店**。
+4. 填写表格。 默认情况下，该表格将提供选择应用商店的**范围**。 当您从**集群**范围添加应用商店时，默认为`cluster`。
+5. 单击**创建**。
 
-**Result**: Your custom cluster catalog is added to Rancher. Once it is in `Active` state, it has completed synchronization and you will be able to start deploying [applications in any project in that cluster](/docs/catalog/apps/) from this catalog.
+**结果**：您的自定义集群目录已添加到Rancher。 进入**Active**状态后，它就完成了同步，您将可以从此应用商店开始部署[该集群中的应用](/docs/catalog/apps/)。
 
-### Adding Project Level Catalogs
+### 添加项目级别应用商店
 
-_Available as of v2.2.0_
+_自v2.1.0起可用_
 
-> **Prerequisites:** In order to manage project scoped catalogs, you need _one_ of the following permissions:
+> **先决条件：** 为了管理项目范围的应用商店，您需要具有以下权限之一：
 >
-> - [Administrator Global Permissions](/docs/admin-settings/rbac/global-permissions/)
-> - [Cluster Owner Permissions](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)
-> - [Project Owner Permissions](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)
-> - [Custom Project Permissions](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles) with the [Manage Project Catalogs](/docs/admin-settings/rbac/cluster-project-roles/#project-role-reference) role assigned.
+> - [管理员全局权限](/docs/admin-settings/rbac/global-permissions/)
+> - [集群所有者权限](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)
+> - [项目所有者权限](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)
+> - [自定义项目权限](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)包含[Manage Project Catalogs](/docs/admin-settings/rbac/cluster-project-roles/#project-role-reference)的权限.
 
-1. From the **Global** view, navigate to your project that you want to start adding custom catalogs.
-2. Choose the **Tools > Catalogs** in the navigation bar.
-3. Click **Add Catalog**.
-4. Complete the form. By default, the form will provide the ability to select `Scope` of the catalog. When you have added a catalog from the **Project** scope, it is defaulted to `Cluster`.
-5. Click **Create**.
+1. 从**全局**界面，导航到要开始添加自定义应用商店的集群。
+2. 在导航栏中选择**工具>商店设置**。
+3. 单击**添加应用商店**。
+4. 填写表格。 默认情况下，该表格将提供选择应用商店的**范围**。 当您从**项目**范围添加应用商店时，默认为`project`。
+5. 单击**创建**。
 
-**Result**: Your custom project catalog is added to Rancher. Once it is in `Active` state, it has completed synchronization and you will be able to start deploying [applications in that project](/docs/catalog/apps/) from this catalog.
+**结果**：您的自定义集群目录已添加到Rancher。 进入**Active**状态后，它就完成了同步，您将可以从此应用商店开始部署[该项目中的应用](/docs/catalog/apps/)。

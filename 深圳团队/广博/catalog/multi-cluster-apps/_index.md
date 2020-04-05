@@ -1,146 +1,146 @@
 ---
-title: Multi-Cluster Apps
+title: 多集群应用
 ---
 
-_Available as of v2.2.0_
+_自v2.2.0起可用_
 
-Typically, most applications are deployed on a single Kubernetes cluster, but there will be times you might want to deploy multiple copies of the same application across different clusters and/or projects. In Rancher, a _multi-cluster application_, is an application deployed using a Helm chart across multiple clusters. With the ability to deploy the same application across multiple clusters, it avoids the repetition of the same action on each cluster, which could introduce user error during application configuration. With multi-cluster applications, you can customize to have the same configuration across all projects/clusters as well as have the ability to change the configuration based on your target project. Since multi-cluster application is considered a single application, it's easy to manage and maintain this application.
+通常，大多数应用程序都部署在单个Kubernetes集群上，但是有时您可能希望跨不同的集群和/或项目部署同一应用程序的多个副本。 在Rancher中，_multi-cluster application_ 是使用Helm chart跨多个集群部署的应用程序。能够跨多个集群部署相同的应用程序，因此可以避免在每个集群上重复执行相同的操作，这可能会在应用程序配置期间引入用户错误。使用多集群应用程序，您可以自定义为在所有项目/集群中具有相同的配置，并能够根据目标项目更改配置。 由于多集群应用程序被视为单个应用程序，因此易于管理和维护该应用程序。
 
-Any Helm charts from a [global catalog](/docs/catalog/#catalog-scope) can be used to deploy and manage multi-cluster applications.
+[全局目录](/docs/catalog/#应用商店范围)中的任何Helm chart均可用于部署和管理多集群应用程序。
 
-After creating a multi-cluster application, you can program a [Global DNS entry](/docs/catalog/globaldns/) to make it easier to access the application.
+创建多集群应用程序之后，可以对[全局DNS入口](/docs/catalog/globaldns/)进行编程，以使其更易于访问该应用程序。
 
-## Prerequisites
+## 前置条件
 
-To create a multi-cluster app in Rancher, you must have at least one of the following permissions:
+要在Rancher中创建多集群应用程序，您必须至少具有以下权限之一：
 
-- A [project-member role](/docs/admin-settings/rbac/cluster-project-roles/#project-roles) in the target cluster(s), which gives you the ability to create, read, update, and delete the workloads
-- A [cluster owner role](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles) for the clusters(s) that include the target project(s)
+- 目标集群中的[项目成员角色](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)，使您能够创建，读取，更新和 删除工作量
+- 包含目标项目的集群的[集群所有者角色](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles）
 
-### Launching a Multi-Cluster App
+### 启动多集群应用
 
-1. From the **Global** view, choose **Apps** in the navigation bar. Click **Launch**.
+1. 从**全局**视图中，在导航栏中选择**多集群应用**。点击**启动**。
 
-2. Find the application that you want to launch, and then click **View Details**.
+2. 找到您要启动的应用程序，然后单击**查看详细信息**。
 
-3. (Optional) Review the detailed descriptions, which are derived from the Helm chart's `README`.
+3. （可选）查看详细说明，这些详细说明来自于Helm chart的**README**。
 
-4. Under **Configuration Options** enter a **Name** for the multi-cluster application. By default, this name is also used to create a Kubernetes namespace in each [target project](#targets) for the multi-cluster application. The namespace is named as `<MULTI-CLUSTER_APPLICATION_NAME>-<PROJECT_ID>`.
+4. 在**配置选项**下，为多集群应用程序输入**名称**。默认情况下，该名称还用于在多集群应用程序的每个[目标项目](#目标项目)中创建Kubernetes命名空间。该命名空间命名为`<MULTI-CLUSTER_APPLICATION_NAME>-<PROJECT_ID>。
 
-5. Select a **Template Version**.
+5. 选择一个**模板版本**。
 
-6. Complete the [multi-cluster applications specific configuration options](#configuration-options-to-make-a-multi-cluster-app) as well as the [application configuration options](#application-configuration-options).
+6. 完成[多集群应用程序特定的配置选项](#多集群应用程序特定的配置选项)以及[应用程序配置选项](#应用程序配置选项)(#应用程序配置选项)。
 
-7. Select the **Members** who can [interact with the multi-cluster application](#members).
+7. 选择可以与多集群应用程序交互的**成员**(#members)。
 
-8. Add any [custom application configuration answers](#overriding-application-configuration-options-for-specific-projects) that would change the configuration for specific project(s) from the default application configuration answers.
+8. 添加任何将更改默认应用程序配置答案中的特定项目配置的[自定义应用程序配置答案](#自定义应用程序配置答案)。
 
-9. Review the files in the **Preview** section. When you're satisfied, click **Launch**.
+9. 查看**预览**部分中的文件。如果满意，请单击**启动**。
 
-**Result**: Your application is deployed to your chosen namespace. You can view the application status from the project's:
+**结果**：您的应用程序已部署到所选的名称空间。您可以从项目的以下位置查看应用程序状态：
 
-#### Configuration Options to Make a Multi-Cluster App
+#### 多集群应用程序特定的配置选项
 
-Rancher has divided the configuration option for the multi-cluster application into several sections.
+Rancher已将多集群应用程序的配置选项分为几个部分。
 
-##### Targets
+##### 目标项目
 
-In the **Targets** section, select the [projects](/docs/k8s-in-rancher/projects-and-namespaces/#projects) that you want the application to be deployed in. The list of projects is based on what projects you have access to. For each project that you select, it will be added to the list, which shows the cluster name and project name that were selected. To remove a target project, click on **-**.
+在**目标**部分中，选择要在其中部署应用程序的[项目](/docs/k8s-in-rancher/projects-and-namespaces/#projects)。项目列表基于您有权访问哪些项目。 对于您选择的每个项目，它将被添加到列表中，其中显示了所选的集群名称和项目名称。 要删除目标项目，请单击**-*。
 
-##### Upgrades
+##### 升级
 
-In the **Upgrades** section, select the upgrade strategy to use, when you decide to upgrade your application.
+在决定升级应用程序时，在**升级**部分中，选择要使用的升级策略。
 
-- **Rolling Update (batched):** When selecting this upgrade strategy, the number of applications upgraded at a time is based on the selected **Batch size** and the **Interval** specifies how many seconds to wait before starting the next batch of updates.
+- **滚动更新（批量）：** 选择此升级策略时，一次升级的应用程序数量基于所选的**批量大小**，而**间隔**指定要等待多少秒开始下一批更新。
 
-- **Upgrade all apps simultaneously:** When selecting this upgrade strategy, all applications across all projects will be upgraded at the same time.
+- **同时升级所有应用程序：** 选择此升级策略时，所有项目中的所有应用程序将同时升级。
 
-##### Roles
+##### 角色
 
-In the **Roles** section, you define the role of the multi-cluster application. Typically, when a user [launches catalog applications](/docs/catalog/apps/#launching-catalog-applications), that specific user's permissions are used for creation of all workloads/resources that is required by the app.
+在**角色**部分中，定义多集群应用程序的角色。通常，当用户[启动目录应用程序](/docs/catalog/apps/#launching-catalog-applications)时，该特定用户的权限将用于创建该应用程序所需的所有工作负载/资源。
 
-For multi-cluster applications, the application is deployed by a _system user_ and is assigned as the creator of all underlying resources. A _system user_ is used instead of the actual user due to the fact that the actual user could be removed from one of the target projects. If the actual user was removed from one of the projects, then that user would no longer be able to manage the application for the other projects.
+对于多集群应用程序，该应用程序由_system user_部署，并被分配为所有基础资源的创建者。由于实际用户可以从目标项目之一中删除，因此使用_system user_代替实际用户。如果将实际用户从一个项目中删除，则该用户将不再能够管理其他项目的应用程序。
 
-Rancher will let you select from two options for Roles, **Project** and **Cluster**. Rancher will allow creation using any of these roles based on the user's permissions.
+Rancher将让您从**角色**的两个选项中进行选择：**项目**和**集群**。 Rancher将允许基于用户的权限使用任何这些角色进行创建。
 
-- **Project** - This is the equivalent of a [project member](/docs/admin-settings/rbac/cluster-project-roles/#project-roles). If you select this role, Rancher will check that in all the target projects, the user has minimally the [project member](/docs/admin-settings/rbac/cluster-project-roles/#project-roles) role. While the user might not be explicitly granted the _project member_ role, if the user is an [administrator](/docs/admin-settings/rbac/global-permissions/), a [cluster owner](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles), or a [project owner](/docs/admin-settings/rbac/cluster-project-roles/#project-roles), then the user is considered to have the appropriate level of permissions.
+- **项目** - 这等效于[项目成员](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)。如果选择此角色，Rancher将检查在所有目标项目中，用户是否至少具有[项目成员](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)角色。虽然可能未明确授予用户_project member_角色，但如果用户是[管理员](/docs/admin-settings/rbac/global-permissions/)，则是[集群所有者](/docs/admin-settings/rbac/global-permissions/)或[项目所有者](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)，则认为该用户拥有适当的权限级别。
 
-- **Cluster** - This is the equivalent of a [cluster owner](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles). If you select this role, Rancher will check that in all the target projects, the user has minimally the [cluster owner](/docs/admin-settings/rbac/cluster-project-roles/#project-roles) role. While the user might not be explicitly granted the _cluster owner_ role, if the user is an [administrator](/docs/admin-settings/rbac/global-permissions/), then the user is considered to have the appropriate level of permissions.
+- **集群** - 这等效于[集群所有者](/docs/admin-settings/rbac/cluster-project-roles/#cluster-roles)。如果选择此角色，Rancher将检查所有目标项目中的用户是否具有[集群所有者](/docs/admin-settings/rbac/cluster-project-roles/#project-roles)角色。尽管可能未明确授予用户_cluster owner_角色，但是如果用户是[管理员](/docs/admin-settings/rbac/global-permissions/)，则认为该用户具有适当的权限级别。
 
-When launching the application, Rancher will confirm if you have these permissions in the target projects before launching the application.
+启动应用程序时，Rancher将在启动应用程序之前确认您是否在目标项目中具有这些权限。
 
-> **Note:** There are some applications like _Grafana_ or _Datadog_ that require access to specific cluster-scoped resources. These applications will require the _Cluster_ role. If you find out later that the application requires cluster roles, the multi-cluster application can be upgraded to update the roles.
+> **注意：**有些应用程序（例如_Grafana_或_Datadog_）需要访问特定的集群作用域资源。这些应用程序将需要_Cluster_角色。如果以后发现应用程序需要集群角色，则可以升级多集群应用程序以更新角色。
 
-#### Application Configuration Options
+#### 应用程序配置选项
 
-For each Helm chart, there are a list of desired answers that must be entered in order to successfully deploy the chart. When entering answers, you must format them using the syntax rules found in [Using Helm: The format and limitations of –set](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set), as Rancher passes them as `--set` flags to Helm.
+对于每个Helm chart，必须输入所需答案的列表才能成功部署chart。 输入答案时，必须使用在[使用Helm：–set](https://github.com/helm/helm/blob/master/docs/using_helm.md#the-format-and-limitations-of---set)的格式和限制中找到的语法规则设置它们的格式，因为Rancher将它们作为--set标志传递给Helm。
 
-> For example, when entering an answer that includes two values separated by a comma (i.e. `abc, bcd`), it is required to wrap the values with double quotes (i.e., `"abc, bcd"`).
+>例如，当输入包含两个用逗号分隔的值（即`abc,bcd`）的答案时，要求用双引号将这些值引起来（即`"abc,bcd"`）。
 
-##### Using a `questions.yml` file
+##### 使用`questions.yml`文件
 
-If the Helm chart that you are deploying contains a `questions.yml` file, Rancher's UI will translate this file to display an easy to use UI to collect the answers for the questions.
+如果您要部署的Helm chart包含一个`questions.yml`文件，则Rancher的用户界面将转换该文件以显示易于使用的用户界面来收集问题的答案。
 
-##### Key Value Pairs for Native Helm Charts
+##### 使用原生Helm Charts键值配对
+对于本地Helm chart（即，来自**Helm Stable**或**Helm Incubator**目录的chart或[自定义Helm chart存储库](/docs/catalog/custom/#custom-helm-chart-repository) ，答案在**答案**部分中作为键值对提供。 这些答案用于覆盖默认值。
 
-For native Helm charts (i.e., charts from the **Helm Stable** or **Helm Incubator** catalogs or a [custom Helm chart repository](/docs/catalog/custom/#custom-helm-chart-repository)), answers are provided as key value pairs in the **Answers** section. These answers are used to override the default values.
+#### 用户
 
-#### Members
+默认情况下，多集群应用程序只能由创建它的用户管理。在**成员**部分中，可以添加其他用户，以便他们还可以帮助管理或查看多集群应用程序。
 
-By default, multi-cluster applications can only be managed by the user who created it. In the **Members** section, other users can be added so that they can also help manage or view the multi-cluster application.
+1. 通过在**成员**搜索框中键入成员的名称，找到要添加的用户。
 
-1. Find the user that you want to add by typing in the member's name in the **Member** search box.
+2. 选择该成员的**访问类型**。多集群项目有三种访问类型，但是由于如何启动多集群应用程序的权限，请仔细阅读以了解这些访问类型的含义。
 
-2. Select the **Access Type** for that member. There are three access types for a multi-cluster project, but due to how the permissions of a multi-cluster application are launched, please read carefully to understand what these access types mean.
+   - **所有者**：此访问类型可以管理多集群应用程序的任何配置部分，包括模板版本，[多集群应用程序特定的配置选项](#多集群应用程序特定的配置选项)，[特定于应用程序的配置选项](#特定于应用程序的配置选项)，[可以与多集群应用程序交互的成员](#成员)和[自定义应用程序配置答案](#覆盖特定项目的应用程序配置选项)。由于创建的多集群应用程序具有与用户不同的权限集，因此多集群应用程序的任何_owner_都可以管理/删除[目标项目]()（＃targets）中的应用程序，而无需显式访问这些项目。仅应为受信任的用户提供此访问类型。
 
-   - **Owner**: This access type can manage any configuration part of the multi-cluster application including the template version, the [multi-cluster applications specific configuration options](#configuration-options-to-make-a-multi-cluster-app), the [application specific configuration options](#application-configuration-options), the [members who can interact with the multi-cluster application](#members) and the [custom application configuration answers](#overriding-application-configuration-options-for-specific-projects). Since a multi-cluster application is created with a different set of permissions from the user, any _owner_ of the multi-cluster application can manage/remove applications in [target projects](#targets) without explicitly having access to these project(s). Only trusted users should be provided with this access type.
+   - **成员**：此访问类型只能修改模板版本，[特定于应用程序的配置选项](#应用程序配置选项)和[自定义应用程序的配置答案](#指定项目的自定义应用程序的配置答案)。由于使用来自用户的不同权限集创建了多集群应用程序，因此多集群应用程序的任何_member_都可以修改该应用程序，而无需显式访问这些项目。仅应为受信任的用户提供此访问类型。
 
-   - **Member**: This access type can only modify the template version, the [application specific configuration options](#application-configuration-options) and the [custom application configuration answers](#overriding-application-configuration-options-for-specific-projects). Since a multi-cluster application is created with a different set of permissions from the user, any _member_ of the multi-cluster application can modify the application without explicitly having access to these project(s). Only trusted users should be provided with this access type.
+   - **只读**：此访问类型无法修改多集群应用程序的任何配置选项。用户只能查看这些应用程序。
 
-   - **Read-only**: This access type cannot modify any configuration option for the multi-cluster application. Users can only view these applications.
+   > **注意：** 请确保仅向受信任的用户授予_Owner_或_Member_访问权限，因为他们将能够自动管理可能无法直接访问的目标项目中为此多集群应用程序创建的应用程序。
 
-   > **Note:** Please ensure only trusted users are given _Owner_ or _Member_ access as they will automatically be able to manage applications created for this multi-cluster application in target projects they might not have direct access to.
+#### 指定项目的自定义应用程序的配置答案
 
-#### Overriding Application Configuration Options for Specific Projects
+使用相同配置在多个集群/项目中部署相同应用程序的能力是多集群应用程序的主要优势之一。 可能有一个特定的项目需要稍有不同的配置选项，但是您希望使用所有其他匹配的应用程序来管理该应用程序。 您可以创建特定项目的特定[应用程序特定配置选项](#应用程序特定配置选项)，而不是创建全新的应用程序。
 
-The ability to use the same configuration to deploy the same application across multiple clusters/projects is one of the main benefits of multi-cluster applications. There might be a specific project that requires a slightly different configuration option, but you want to manage that application with all the other matching applications. Instead of creating a brand new application, you can override specific [application specific configuration options](#application-configuration-options) for specific projects.
+1. 在**应答参数**部分中，单击**添加应答参数**。
 
-1. In the **Answer Overrides** section, click **Add Override**.
+2. 对于每个替代，您可以选择以下内容：
 
-2. For each override, you can select the following:
+   - **区域**： 在配置选项中选择要覆盖答案的目标项目。
 
-   - **Scope**: Select which target projects you want to override the answer in the configuration option.
+   - **问题**： 选择要覆盖的问题。
 
-   - **Question**: Select which question you want to override.
+   - **答案**： 输入您要改用的答案。
 
-   - **Answer**: Enter the answer that you want to be used instead.
+### 升级多集群应用程序角色和项目
 
-### Upgrading Multi-Cluster App Roles and Projects
+- **更改现有Multi-Cluster应用上的角色**
+  创建者和添加访问权限类型**所有者**到多集群应用程序的任何用户都可以升级其角色。添加新角色时，我们将检查用户在当前所有目标项目中是否具有该确切角色。这些检查可以使全局管理员，集群所有者和项目所有者获得相同的放宽，如**角色**字段的安装部分所述。
 
-- **Changing Roles on an existing Multi-Cluster app**
-  The creator and any users added with the access-type "owner" to a multi-cluster app, can upgrade its Roles. When adding a new Role, we check if the user has that exact role in all current target projects. These checks allow the same relaxations for global admins, cluster owners and project-owners as described in the installation section for the field `Roles`.
+- **添加/删除目标项目**
 
-- **Adding/Removing target projects**
+1. 创建者和使用访问类型**所有者**添加到多集群应用程序的任何用户都可以添加或删除其目标项目。在添加新项目时，我们检查此请求的调用者是否在要添加的新项目中是否在多集群应用程序上定义了所有角色。全局管理员，集群所有者和项目所有者的角色检查再次放松。
+2. 删除目标项目时，我们不执行这些成员资格检查。这是因为调用者的权限可能针对目标项目，或者该项目可能已被删除，因此调用者希望将其从目标列表中删除。
 
-1. The creator and any users added with access-type "owner" to a multi-cluster app, can add or remove its target projects. When adding a new project, we check if the caller of this request has all Roles defined on multi-cluster app, in the new projects they want to add. The roles checks are again relaxed for global admins, cluster-owners and project-owners.
-2. We do not do these membership checks when removing target projects. This is because the caller's permissions could have with respect to the target project, or the project could have been deleted and hence the caller wants to remove it from targets list.
+### 多集群应用程序管理
 
-### Multi-Cluster Application Management
+与同类型的多个单个应用程序相比，使用多集群应用程序的好处之一是易于管理。可以克隆，升级或回滚多集群应用程序。
 
-One of the benefits of using a multi-cluster application as opposed to multiple individual applications of the same type, is the ease of management. Multi-cluster applications can be cloned, upgraded or rolled back.
+1. 从**全局**视图中，在导航栏中选择**多集群应用**。
 
-1. From the **Global** view, choose **Apps** in the navigation bar.
+2. 选择要对其执行以下操作之一的多集群应用程序，然后单击**垂直省略号（...）**。选择以下选项之一：
 
-2. Choose the multi-cluster application you want to take one of these actions on and click the **Vertical Ellipsis (...)**. Select one of the following options:
+   - **克隆**： 使用相同的配置创建另一个多集群应用程序。通过使用此选项，您可以轻松地复制多集群应用程序。
+   - **升级**： 升级您的多集群应用程序以更改配置的某些部分。对多集群应用程序执行升级时，如果您具有正确的[访问类型](#用户)，则可以修改[升级策略](#升级策略)。
+   - **回滚**： 将您的应用回滚到特定版本。如果升级后，一个或多个[目标](#目标)的多集群应用程序出现问题，则Rancher已存储了多达10个版本的多集群应用程序。回滚多集群应用程序将还原**所有**目标集群和项目的应用程序，而不仅仅是受升级问题影响的目标。
 
-   - **Clone**: Creates another multi-cluster application with the same configuration. By using this option, you can easily duplicate a multi-cluster application.
-   - **Upgrade**: Upgrade your multi-cluster application to change some part of the configuration. When performing an upgrade for multi-cluster application, the [upgrade strategy](#upgrade-strategy) can be modified if you have the correct [access type](#members).
-   - **Rollback**: Rollback your application to a specific version. If after an upgrade, there are issues for your multi-cluster application for one or more of your [targets](#targets), Rancher has stored up to 10 versions of the multi-cluster application. Rolling back a multi-cluster application reverts the application for **all** target clusters and projects, not just the targets(s) affected by the upgrade issue.
+### 删除多集群应用程序
 
-### Deleting a Multi-Cluster Application
+1. 从**全局**视图中，在导航栏中选择**多集群应用**。
 
-1. From the **Global** view, choose **Apps** in the navigation bar.
+2. 选择要删除的多集群应用程序，然后单击**垂直省略号（...）>删除**。删除多集群应用程序时，所有目标项目中的所有应用程序和名称空间都将被删除。
 
-2. Choose the multi-cluster application you want to delete and click the **Vertical Ellipsis (...) > Delete**. When deleting the multi-cluster application, all applications and namespaces are deleted in all of the target projects.
+   > **注意：** 目标项目中为多集群应用程序创建的应用程序不能单独删除。仅当删除多集群应用程序时才能删除应用程序。
 
-   > **Note:** The applications in the target projects, that are created for a multi-cluster application, cannot be deleted individually. The applications can only be deleted when the multi-cluster application is deleted.

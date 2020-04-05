@@ -1,118 +1,128 @@
 ---
-title: Global DNS
+title: 全局DNS
 ---
 
-_Available as of v2.2.0_
+_自v2.2.0起可用_
+ 
+Rancher的全局DNS功能提供了一种对外部DNS提供商进行编程的方法，以将流量路由到您的Kubernetes应用程序。 由于DNS编程支持跨不同Kubernetes集群的跨应用程序，因此在全局级别配置全局DNS。 一个应用程序可以变得高度可用，因为它允许您在不同的Kubernetes集群上运行一个应用程序。 如果您的Kubernetes集群之一发生故障，该应用程序仍将可访问。
+ 
+> **注意：** 全局DNS仅在启用[本地集群](/docs/installation/options/chart-options/#import-local-cluster)的[Kubernetes安装](/docs/installation/k8s-install/)。
 
-Rancher's Global DNS feature provides a way to program an external DNS provider to route traffic to your Kubernetes applications. Since the DNS programming supports spanning applications across different Kubernetes clusters, Global DNS is configured at a global level. An application can become highly available as it allows you to have one application run on different Kubernetes clusters. If one of your Kubernetes clusters goes down, the application would still be accessible.
+### 全球DNS提供商
 
-> **Note:** Global DNS is only available in [Kubernetes installations](/docs/installation/k8s-install/) with the [`local` cluster enabled](/docs/installation/options/chart-options/#import-local-cluster).
+在添加全局DNS记录之前，您将需要配置对外部提供商的访问。
 
-### Global DNS Providers
+下表列出了每个提供商首次发布的Rancher版本。
 
-Prior to adding in Global DNS entries, you will need to configure access to an external provider.
-
-The following table lists the first version of Rancher each provider debuted.
-
-| DNS Provider                                       | Available as of |
+| DNS提供商                                           | 可用版本         |
 | -------------------------------------------------- | --------------- |
 | [AWS Route53](https://aws.amazon.com/route53/)     | v2.2.0          |
 | [CloudFlare](https://www.cloudflare.com/dns/)      | v2.2.0          |
 | [AliDNS](https://www.alibabacloud.com/product/dns) | v2.2.0          |
 
-### Global DNS Entries
+### 全局DNS记录
 
-For each application that you want to route traffic to, you will need to create a Global DNS Entry. This entry will use a fully qualified domain name (a.k.a FQDN) from a global DNS provider to target applications. The applications can either resolve to a single [multi-cluster application](/docs/catalog/multi-cluster-apps/) or to specific projects. You must [add specific annotation labels](#adding-annotations-to-ingresses-to-program-the-external-dns) to the ingresses in order for traffic to be routed correctly to the applications. Without this annotation, the programming for the DNS entry will not work.
+对于要将流量路由到的每个应用程序，您将需要创建一个全局DNS记录。此项将使用来自全球DNS提供商的标准域名（也称为FQDN）来定位应用程序。这些应用程序可以解析为单个[多集群应用程序](/docs/catalog/multi-cluster-apps/)或特定项目。您必须向入口[添加特定的注释标签](#adding-annotations-in-inresses-to-program-the-external-dns)，以将流量正确路由到应用程序。没有此注释，DNS记录的编程将无法进行。
 
-### Permissions for Global DNS Providers/Entries
+### 全局DNS提供商/记录的权限
 
-By default, only [global administrators](/docs/admin-settings/rbac/global-permissions/) and the creator of the Global DNS provider or Global DNS entry have access to use, edit and delete them. When creating the provider or entry, the creator can add additional users in order for those users to access and manage them. By default, these members will get `Owner` role to manage them.
+默认情况下，只有[全局管理员](/docs/admin-settings/rbac/global-permissions/)和全局DNS提供程序或全局DNS记录的创建者有权使用，编辑和删除它们。创建提供者或记录时，创建者可以添加其他用户，以便这些用户访问和管理他们。默认情况下，这些成员将具有`所有者`角色来管理它们。
 
-### Setting up Global DNS for Applications
+### 为应用程序设置全局DNS
 
-#### Add a Global DNS Provider
+### 全局DNS记录
 
-1. From the **Global View**, select **Tools > Global DNS Providers**.
-1. To add a provider, choose from the available provider options and configure the Global DNS Provider with necessary credentials and an optional domain.
-1. (Optional) Add additional users so they could use the provider when creating Global DNS entries as well as manage the Global DNS provider.
+对于要将流量路由到的每个应用程序，您将需要创建一个全局DNS记录。 此项将使用来自全球DNS提供商的标准域名（也称为FQDN）来定位应用程序。 这些应用程序可以解析为单个[多集群应用程序](/docs/catalog/multi-cluster-apps/)或特定项目。 您必须向入口[添加特定的注释标签](#adding-annotations-in-inresses-to-program-the-external-dns)，以将流量正确路由到应用程序。 没有此注释，DNS记录的编程将无法进行。
+
+### 全局DNS提供商/记录的权限
+
+默认情况下，只有[全局管理员](/docs/admin-settings/rbac/global-permissions/)和全局DNS提供程序或全局DNS记录的创建者有权使用，编辑和删除它们。 创建提供者或记录时，创建者可以添加其他用户，以便这些用户访问和管理他们。 默认情况下，这些成员将具有**所有者**角色来管理它们。
+
+### 为应用程序设置全局DNS
+
+#### 添加全局DNS提供商
+
+1. 在**全局**视图中，选择**工具>全局DNS服务**。
+1. 要添加提供程序，请从可用的提供程序选项中进行选择，并为全局DNS提供程序配置必要的凭据和可选域。
+1. （可选）添加其他用户，以便他们在创建全局DNS记录以及管理全局DNS提供程序时可以使用提供程序。
 
  accordion id="route53" label="Route53" 
 
-1. Enter a **Name** for the provider.
-1. (Optional) Enter the **Root Domain** of the hosted zone on AWS Route53. If this is not provided, Rancher's Global DNS Provider will work with all hosted zones that the AWS keys can access.
-1. Enter the AWS **Access Key**.
-1. Enter the AWS **Secret Key**.
-1. Under **Member Access**, search for any users that you want to have the ability to use this provider. By adding this user, they will also be able to manage the Global DNS Provider entry.
-1. Click **Create**.
+1. 输入提供商的**名称**。
+1. （可选）输入AWS Route53上托管区域的**根域**。 如果未提供此选项，则Rancher的Global DNS Provider将与AWS密钥可以访问的所有托管区域一起使用。
+1. 输入AWS **访问密钥**。
+1. 输入AWS **Secret Key**。
+1. 在**成员访问权限**下，搜索您希望能够使用此提供程序的任何用户。 通过添加此用户，他们还将能够管理全局DNS提供程序记录。
+1. 单击**创建**。
     /accordion 
     accordion id="cloudflare" label="CloudFlare" 
-1. Enter a **Name** for the provider.
-1. Enter the **Root Domain**, this field is optional, in case this is not provided, Rancher's Global DNS Provider will work with all domains that the keys can access.
-1. Enter the CloudFlare **API Email**.
-1. Enter the CloudFlare **API Key**.
-1. Under **Member Access**, search for any users that you want to have the ability to use this provider. By adding this user, they will also be able to manage the Global DNS Provider entry.
-1. Click **Create**.
+1. 输入提供商的**名称**。
+1. 输入**Root Domain**（根域），此字段是可选的，如果未提供，则Rancher的Global DNS Provider将与密钥可以访问的所有域一起使用。
+1. 输入CloudFlare **API电子邮件**。
+1. 输入CloudFlare **API密钥**。
+1. 在**成员访问权限**下，搜索您希望能够使用此提供程序的任何用户。 通过添加此用户，他们还将能够管理全局DNS提供程序记录。
+1. 单击**创建**。
     /accordion 
     accordion id="alidns" label="AliDNS" 
-1. Enter a **Name** for the provider.
-1. Enter the **Root Domain**, this field is optional, in case this is not provided, Rancher's Global DNS Provider will work with all domains that the keys can access.
-1. Enter the **Access Key**.
-1. Enter the **Secret Key**.
-1. Under **Member Access**, search for any users that you want to have the ability to use this provider. By adding this user, they will also be able to manage the Global DNS Provider entry.
-1. Click **Create**.
+1. 输入提供商的**名称**。
+1. 输入**Root Domain**（根域），此字段是可选的，如果未提供，则Rancher的Global DNS Provider将与密钥可以访问的所有域一起使用。
+1. 输入**访问密钥**。
+1. 输入**密钥**。
+1. 在“成员访问权限”下，搜索您希望能够使用此提供程序的任何用户。 通过添加此用户，他们还将能够管理全局DNS提供程序记录。
+1. 单击**创建**。
 
-> **Notes:**
+>> **注意：**
 >
-> - Alibaba Cloud SDK uses TZ data. It needs to be present on `/usr/share/zoneinfo` path of the nodes running [`local` cluster](/docs/installation/options/chart-options/#import-local-cluster), and it is mounted to the external DNS pods. If it is not available on the nodes, please follow the [instruction](https://www.ietf.org/timezones/tzdb-2018f/tz-link.html) to prepare it.
-> - Different versions of AliDNS have different allowable TTL range, where the default TTL for a global DNS entry may not be valid. Please see the [reference](https://www.alibabacloud.com/help/doc-detail/34338.htm) before adding an AliDNS entry.
+> - 阿里云SDK使用TZ数据。 它必须存在于运行[local cluster](/docs/installation/options/chart-options/#import-local-cluster)的节点的`/usr/share/zoneinfo`路径中，并安装到外部DNS容器。 如果在节点上不可用，请按照[说明](https://www.ietf.org/timezones/tzdb-2018f/tz-link.html)进行准备。
+> - 不同版本的AliDNS具有不同的允许TTL范围，其中全局DNS记录的默认TTL可能无效。 在添加AliDNS记录之前，请参阅[参考](https://www.alibabacloud.com/help/doc-detail/34338.htm)。
 >    /accordion 
 
-#### Add a Global DNS Entry
+#### 添加全局DNS记录
 
-1. From the **Global View**, select **Tools > Global DNS Entries**.
-1. Click on **Add DNS Entry**.
-1. Enter the **FQDN** you wish to program on the external DNS.
-1. Select a Global DNS **Provider** from the list.
-1. Select if this DNS entry will be for a [multi-cluster application](/docs/catalog/multi-cluster-apps/) or for workloads in different [projects](/docs/k8s-in-rancher/projects-and-namespaces/). You will need to ensure that [annotations are added to any ingresses](#adding-annotations-to-ingresses-to-program-the-external-dns) for the applications that you want to target.
-1. Configure the **DNS TTL** value in seconds. By default, it will be 300 seconds.
-1. Under **Member Access**, search for any users that you want to have the ability to manage this Global DNS entry.
+1. 在**全局**视图中，选择**工具>全局DNS服务**。
+1. 点击**添加DNS记录**。
+1. 输入要在外部DNS上编程的**FQDN**。
+1. 从列表中选择一个全局DNS**提供程序**。
+1. 选择此DNS记录是用于[多集群应用程序](/docs/catalog/multi-cluster-apps/)还是用于不同[项目](/docs/k8s-in-rancher/projects-and-namespaces/)。 您将需要确保[将注释添加到任何入口](#在程序外部的dns中添加注释）。
+1. 以秒为单位配置**DNS TTL**值。 默认情况下为300秒。
+1. 在**成员访问**下，搜索您希望能够管理此全局DNS记录的所有用户。
 
-### Adding Annotations to Ingresses to program the External DNS
+### 在程序外部的dns中添加注释
 
-In order for Global DNS entries to be programmed, you will need to add a specific annotation on an ingress in your application or target project and this ingress needs to use a specific `hostname` and an annotation that should match the FQDN of the Global DNS entry.
+为了对全局DNS记录进行编程，您需要在应用程序或目标项目的入口上添加特定的批注，并且此入口需要使用特定的**主机名**和与全局DNS的FQDN匹配的注释记录。
 
-1. For any application that you want targeted for your Global DNS entry, find an ingress associated with the application.
-1. In order for the DNS to be programmed, the following requirements must be met:
-   - The ingress routing rule must be set to use a `hostname` that matches the FQDN of the Global DNS entry.
-   - The ingress must have an annotation (`rancher.io/globalDNS.hostname`) and the value of this annotation should match the FQDN of the Global DNS entry.
-1. Once the ingress in your [multi-cluster application](/docs/catalog/multi-cluster-apps/) or in your target projects are in `active` state, the FQDN will be programmed on the external DNS against the Ingress IP addresses.
+1. 对于要作为全局DNS记录目标的任何应用程序，请找到与该应用程序关联的入口。
+1. 为了对DNS进行编程，必须满足以下要求：
+    - 必须将入口路由规则设置为使用与全局DNS记录的FQDN匹配的`主机名`。
+    - 入口必须具有注释（`rancher.io / globalDNS.hostname`），并且此注释的值应与全局DNS记录的FQDN相匹配。
+1. 一旦您的[多集群应用程序](/docs/catalog/multi-cluster-apps/)或目标项目中的入口处于`Active`状态，FQDN将针对该入口在外部DNS上进行编程IP地址。
 
-### Editing a Global DNS Provider
+### 编辑全局DNS提供商
 
-The [global administrators](/docs/admin-settings/rbac/global-permissions/), creator of the Global DNS provider and any users added as `members` to a Global DNS provider, have _owner_ access to that provider. Any members can edit the following fields:
+[全球管理员](/docs/admin-settings/rbac/global-permissions/)，全球DNS提供程序的创建者，以及作为`成员`添加到全球DNS提供程序的任何用户，都对该所有者具有_owner_访问权限。 任何成员都可以编辑以下字段：
 
-- Root Domain
-- Access Key & Secret Key
-- Members
+- 根域
+- 访问密钥和秘密密钥
+- 成员
 
-1. From the **Global View**, select **Tools > Global DNS Providers**.
+1. 在**全局**视图中，选择**工具>全局DNS提供商**。
 
-1. For the Global DNS provider that you want to edit, click the **Vertical Ellipsis (...) > Edit**.
+1. 对于要编辑的全局DNS提供商，单击**垂直省略号（...）>编辑**。
 
-### Editing a Global DNS Entry
+### 编辑全局DNS记录
 
-The [global administrators](/docs/admin-settings/rbac/global-permissions/), creator of the Global DNS entry and any users added as `members` to a Global DNS entry, have _owner_ access to that DNS entry. Any members can edit the following fields:
+[全局管理员](/docs/admin-settings/rbac/global-permissions/)，全局DNS条目的创建者，以及作为`成员`添加到全局DNS条目的任何用户，都具有对该所有者的_owner_访问权限。任何成员都可以编辑以下字段：
 
 - FQDN
-- Global DNS Provider
-- Target Projects or Multi-Cluster App
+- 全球DNS提供商
+- 目标项目或多集群应用
 - DNS TTL
-- Members
+- 成员
 
-Any users who can access the Global DNS entry can **only** add target projects that they have access to. However, users can remove **any** target project as there is no check to confirm if that user has access to the target project.
+任何可以访问**全局DNS**记录的用户都**只**可以添加他们有权访问的目标项目。但是，用户可以删除任何目标项目，因为不会检查确认该用户是否有权访问目标项目。
 
-Permission checks are relaxed for removing target projects in order to support situations where the user's permissions might have changed before they were able to delete the target project. Another use case could be that the target project was removed from the cluster before being removed from a target project of the Global DNS entry.
+放宽了权限检查以删除目标项目，以支持用户在删除目标项目之前可能已更改其权限的情况。另一个用例可能是在从全局DNS条目的目标项目中删除目标项目之前，先将其从集群中删除。
 
-1. From the **Global View**, select **Tools > Global DNS Entries**.
+1. 在**全局**视图中，选择**工具>全局DNS记录**。
 
-1. For the Global DNS entry that you want to edit, click the **Vertical Ellipsis (...) > Edit**.
+1. 对于要编辑的全局DNS条目，单击**垂直省略号（...）>编辑**。

@@ -1,60 +1,60 @@
 ---
-title: Custom Catalogs
+title: 自定义应用Custom Catalogs
 ---
 
-Any user can [create custom catalogs](/docs/catalog/custom/creating/) to add into Rancher. Besides the content of the catalog, users must ensure their catalogs are able to be added into Rancher.
+任何用户都可以[添加自定义应用商店](/docs/catalog/custom/creating/)到Rancher中。 除了应用商店的内容外，用户还必须确保能够将商店添加到Rancher中。
 
-### Types of Repositories
+### 商店仓库类型
 
-Rancher supports adding in different types of repositories as a catalog:
+Rancher支持不同类型的应用商店仓库:
 
-- Custom Git Repository
-- Custom Helm Chart Repository
+-自定义的Github仓库
+-自定义Helm Chart仓库
 
-#### Custom Git Repository
+#### 自定义Git仓库
 
-The Git URL needs to be one that `git clone` [can handle](https://git-scm.com/docs/git-clone#_git_urls_a_id_urls_a) and must end in `.git`. The branch name must be a branch that is in your catalog URL. If no branch name is provided, it will default to use the `master` branch. Whenever you add a catalog to Rancher, it will be available almost immediately.
+Git URL必须是`git clone`[可以处理的URL](https://git-scm.com/docs/git-clone#_git_urls_a_id_urls_a)，并且必须以.git结尾。 分支名称必须是目录URL中的一个分支。 如果没有提供分支名称，则默认使用`master`分支。 每当您将目录添加到Rancher时，它将几乎立即可用。
 
-#### Custom Helm Chart Repository
+#### 自定义Helm Chart仓库
 
-A Helm chart repository is an HTTP server that contains one or more packaged charts. Any HTTP server that can serve YAML files and tar files and can answer GET requests can be used as a repository server.
+Helm Chart仓库是一个HTTP服务器，其中包含一个或多个打包的Chart。 可以提供YAML文件和tar文件并可以处理GET请求的任何HTTP服务器都可以用作应用商店仓库。
 
-Helm comes with a built-in package server for developer testing (`helm serve`). The Helm team has tested other servers, including Google Cloud Storage with website mode enabled, S3 with website mode enabled or hosting custom chart repository server using open-source projects like [ChartMuseum](https://github.com/helm/chartmuseum).
+Helm带有用于开发人员测试的内置软件包服务器（`helm serve`）。 Helm团队已经测试了其他服务器，包括启用了网站模式的Google Cloud Storage，启用了网站模式的S3或使用[ChartMuseum](https://github.com/helm/chartmuseum)等开源项目托管自定义应用商店Chart的服务器 。
 
-In Rancher, you can add the custom Helm chart repository with only a catalog name and the URL address of the chart repository.
+在Rancher中，您可以仅使用名称和Chart仓库的URL地址添加自定义Helm应用商店。
 
-### Catalog Fields
+### 配置参数
 
-When [adding your catalog](/docs/catalog/custom/adding/) to Rancher, you'll provide the following information:
+当[添加应用商店](/docs/catalog/custom/adding/)到Rancher时, 用户必须提供下列信息:
 
-| Variable            | Description                                                                                                                                                                       |
+| 参数                 | 描述                                                                                                                                                                       |
 | ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Name                | Name for your custom catalog to distinguish the repositories in Rancher                                                                                                           |
-| Catalog URL         | URL of your custom chart repository                                                                                                                                               |
-| Use Private Catalog | Selected if you are using a private repository that requires authentication                                                                                                       |
-| Username (Optional) | [Username](#using-username-and-password) or [OAuth Token](#using-an-oauth-token)                                                                                                  |
-| Password (Optional) | If you are authenticating using [username](#using-username-and-password), the associated password. If you are using an [OAuth Token](#using-an-oauth-token), use `x-oauth-basic`. |
-| Branch              | For a Git repository, the branch name. Default: `master`. For a Helm Chart repository, this field is ignored.                                                                     |
+| 名称                | 自定义名称以区分Rancher中添加的应用商店
+| 商店URL地址          | 自定义商店存储库的URL
+| 使用私有应用商店      | 如果使用的是需要身份验证的私有存储库，则选择
+| 用户名 (可选)         | [Username](#using-username-and-password) 或 [OAuth Token](#using-an-oauth-token)                                                                                                  |
+| 密码 (可选) | 如果您正在使用[用户名](#using-username-and-password)进行身份验证，则为关联的密码。如果您使用的是[OAuth Token](#using-an-oauth-token)请使用`x-oauth-basic`. |
+| 分支              | Git仓库的分支名称，默认值为：`master`。对于Helm Chartc存储库，该字段将被忽略。
 
-### Private Repositories
+### 私有存储库
 
-_Available as of v2.2.0_
+_自v2.2.0起可用_
 
-Private Git or Helm chart repositories can be added into Rancher using either credentials, i.e. `Username` and `Password`. Private Git repositories also support authentication using OAuth tokens.
+可以使用任一凭据（即`用户名`和`密码`）将私有Git或Helm chart存储库添加到Rancher中。 私有Git存储库还支持使用OAuth令牌进行身份验证。
 
-#### Using Username and Password
+#### 使用用户名与密码
 
-1. When [adding the catalog](/docs/catalog/custom/adding/), select the **Use private catalog** checkbox.
+1. [添加目录](/docs/catalog/custom/adding/)时，选中**使用私有应用商店**复选框。
 
-2. Provide the `Username` and `Password` for your Git or Helm repository.
+2. 为您的Git或Helm存储库提供`用户名`和`密码`。
 
-#### Using an OAuth token
+#### 使用OAuth token
 
-Read [using Git over HTTPS and OAuth](https://github.blog/2012-09-21-easier-builds-and-deployments-using-git-over-https-and-oauth/) for more details on how OAuth authentication works.
+阅读[using Git over HTTPS and OAuth](https://github.blog/2012-09-21-easier-builds-and-deployments-using-git-over-https-and-oauth/)了解更多有关如何使用OAuth身份验证。
 
-1. Create an [OAuth token](https://github.com/settings/tokens)
-   with `repo` permission selected, and click **Generate token**.
+1.创建一个[OAuth令牌](https://github.com/settings/tokens)
+  并选择`repo`权限，然后点击`生成令牌`。
 
-2. When [adding the catalog](/docs/catalog/custom/adding/), select the **Use private catalog** checkbox.
+2. [添加目录](/docs/catalog/custom/adding/)时，选中`使用私有应用商店`复选框。
 
-3. For `Username`, provide the Git generated OAuth token. For `Password`, enter `x-oauth-basic`.
+3.对于`用户名`，提供Git生成的OAuth令牌。 对于`密码`，输入`x-oauth-basic`。
